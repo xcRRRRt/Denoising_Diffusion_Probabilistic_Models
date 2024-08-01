@@ -82,7 +82,7 @@ if __name__ == '__main__':
 
 (10 epoch 50k steps, 1 epoch cost about 1 hour, generate 32x image cost 2-3 minutes)  
 
-![celeba](readme\celeba.png)
+![celeba](readme/celeba.png)
 
 ---
 
