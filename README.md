@@ -88,6 +88,7 @@ if __name__ == '__main__':
 
 ## Experiment params
 
+**python 3.9**  
 **RTX3050 4GB**
 
 |    dataset    |  img size   | num features |    multi     | dropout | batch size |

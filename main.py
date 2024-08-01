@@ -8,4 +8,4 @@ if __name__ == '__main__':
     ddpm = DDPM(model, T=1000, d=100)
     train_loader = celeba_data_loader(r"E:\Dataset", batch_size=32, train=True, num_workers=4)
     test_loader = celeba_data_loader(r"E:\Dataset", batch_size=32, train=False, num_workers=4)
-    train(ddpm, train_loader, test_loader, epochs=1000)
+    train(ddpm, train_loader, test_loader, epochs=1000, checkpoint_path=r'lightning_logs/version_4/checkpoints/epoch=9-step=50870.ckpt')

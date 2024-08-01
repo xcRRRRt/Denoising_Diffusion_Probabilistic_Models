@@ -37,12 +37,9 @@ class DDPM(nn.Module):
     def sample(self, sample_num: int, shape, device) -> torch.Tensor:
         with torch.no_grad():
             x = torch.randn(sample_num, *shape, device=device)
-            for t in tqdm(reversed(range(self.T)), desc="Sampling", total=self.T, leave=False, unit="denoising"):
+            for t in tqdm(reversed(range(self.T)), desc="Sampling", total=self.T, leave=False, unit="denoising", position=0):
                 time_tensor = torch.full((sample_num, 1), t, device=device, dtype=torch.long)
-                eta_theta = self.net(x, time_tensor)
-                alpha_t = self.alphas[t]
-                alpha_t_bar = self.alpha_bars[t]
-                x = (x - (1 - alpha_t) / (1 - alpha_t_bar).sqrt() * eta_theta) / alpha_t.sqrt()
+                x = (x - (1 - self.alphas[t]) / (1 - self.alpha_bars[t]).sqrt() * self.net(x, time_tensor)) / self.alphas[t].sqrt()
                 if t > 0:
                     x += self.betas[t].sqrt() * torch.randn(sample_num, *shape, device=device)
         return x
