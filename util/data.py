@@ -54,7 +54,8 @@ def celeba_data_loader(root, batch_size, train: bool, num_workers: int):
         root=root,
         split='train' if train else 'valid',
         transform=torchvision.transforms.Compose([
-            torchvision.transforms.CenterCrop(64),
+            torchvision.transforms.CenterCrop(178),
+            torchvision.transforms.Resize(64),
             torchvision.transforms.ToTensor()
         ]),
         download=True

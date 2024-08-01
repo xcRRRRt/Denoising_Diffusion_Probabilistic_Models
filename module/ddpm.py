@@ -1,12 +1,13 @@
 import torch
 from torch import nn
+from tqdm import tqdm
 
 from module.time_emb import TimeEmbedding
 from module.unet import UNet
 
 
 class DDPM(nn.Module):
-    def __init__(self, net: UNet, T=1000, d=100, beta=(1e-4, 0.02)):
+    def __init__(self, net: UNet, T: int = 1000, d: int = 100, beta=(1e-4, 0.02)):
         super(DDPM, self).__init__()
         self.net = net
         self.T = T
@@ -33,10 +34,10 @@ class DDPM(nn.Module):
         eps_theta = self.net(x_noisy, t)
         return x_noisy, eps, eps_theta
 
-    def sample(self, sample_num: int, shape, device):
+    def sample(self, sample_num: int, shape, device) -> torch.Tensor:
         with torch.no_grad():
             x = torch.randn(sample_num, *shape, device=device)
-            for t in reversed(range(self.T)):
+            for t in tqdm(reversed(range(self.T)), desc="Sampling", total=self.T, leave=False, unit="denoising"):
                 time_tensor = torch.full((sample_num, 1), t, device=device, dtype=torch.long)
                 eta_theta = self.net(x, time_tensor)
                 alpha_t = self.alphas[t]

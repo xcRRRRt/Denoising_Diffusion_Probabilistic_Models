@@ -40,7 +40,9 @@ class Diffusion(pl.LightningModule):
             self.logger.experiment.add_image('sample', grid, global_step=self.global_step, dataformats="CHW")
 
     def configure_optimizers(self):
-        return torch.optim.Adam(self.parameters(), lr=1e-4)
+        optimizer = torch.optim.Adam(self.parameters(), lr=1e-4)
+        scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=10, gamma=0.8)
+        return [optimizer], [scheduler]
 
     def show_images(self, images):
         # Converting images to CPU numpy arrays
@@ -72,7 +74,7 @@ class Diffusion(pl.LightningModule):
         return torch.from_numpy(matrix)
 
 
-def train(ddpm: DDPM, train_dataloader, val_dataloader, epochs: int):
+def train(ddpm: DDPM, train_dataloader, val_dataloader, epochs: int, checkpoint_path: str = None):
     diffusion = Diffusion(ddpm)
     trainer = pl.Trainer(
         log_every_n_steps=1,
@@ -82,4 +84,4 @@ def train(ddpm: DDPM, train_dataloader, val_dataloader, epochs: int):
             pl.callbacks.ModelCheckpoint(monitor='valid/loss', save_top_k=1, verbose=True, mode='min')
         ]
     )
-    trainer.fit(diffusion, train_dataloader, val_dataloader)
+    trainer.fit(diffusion, train_dataloader, val_dataloader, ckpt_path=checkpoint_path)
